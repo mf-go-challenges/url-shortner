@@ -5,15 +5,15 @@ import (
 	"net/url"
 )
 
-func ValidateUrl(input string) (*url.URL, error) {
-	parsedURL, err := url.Parse(input)
+func ValidateUrl(input string) error {
+	parsedUrl, err := url.Parse(input)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	if parsedURL.Scheme != "http" && parsedURL.Scheme != "https" {
-		return nil, errors.New("Invalid URL scheme")
+	if parsedUrl.Scheme != "http" && parsedUrl.Scheme != "https" {
+		return errors.New("Invalid URL")
 	}
 
-	return parsedURL, nil
+	return nil
 }

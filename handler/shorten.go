@@ -33,3 +33,27 @@ func getOriginalUrl(context *gin.Context) {
 
 	context.Redirect(302, url)
 }
+
+func BulkUploadUrls(context *gin.Context) {
+	fileHeader, err := context.FormFile("file")
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "file is required"})
+		return
+	}
+
+	openedFile, err := fileHeader.Open()
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "cannot open file"})
+		return
+	}
+
+	defer openedFile.Close()
+
+	result, err := models.BulkUploadUrls(openedFile)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusOK, result)
+}
