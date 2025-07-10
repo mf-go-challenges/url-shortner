@@ -50,7 +50,7 @@ func BulkUploadUrls(file multipart.File) ([]ShortenResult, error) {
 		if err != nil {
 			return nil, err
 		}
-		stmt, err := db.DB.Prepare(`INSERT INTO links(code, url, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)`)
+		stmt, err := db.DB.Prepare(`INSERT INTO links(code, url, created_at) VALUES ($1, $2, CURRENT_TIMESTAMP)`)
 		if err != nil {
 			return nil, err
 		}
