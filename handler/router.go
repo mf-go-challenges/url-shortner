@@ -6,4 +6,7 @@ func RegisterRoutes(server *gin.Engine) {
 	server.POST("/shorten", createShortUrl)
 	server.GET("/:code", getOriginalUrl)
 	server.POST("/bulk", BulkUploadUrls)
+
+	//server.POST("/signup", signup)
+	//server.POST("/signup")
 }

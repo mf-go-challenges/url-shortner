@@ -60,6 +60,7 @@ func BulkUploadUrls(file multipart.File) ([]ShortenResult, error) {
 			return nil, err
 		}
 
+		UrlStore[code] = line
 		results = append(results, ShortenResult{URL: line, Code: code})
 	}
 

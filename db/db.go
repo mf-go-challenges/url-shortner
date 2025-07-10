@@ -43,16 +43,27 @@ func InitDB() {
 }
 
 func CreateTables() {
-	createTable := `CREATE TABLE IF NOT EXISTS links (
+	createLinksTable := `CREATE TABLE IF NOT EXISTS links (
   		id SERIAL PRIMARY KEY,
     	code TEXT NOT NULL,
   		url TEXT NOT NULL,
   		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	)`
 
-	_, err := DB.Exec(createTable)
+	_, err := DB.Exec(createLinksTable)
 	if err != nil {
 		panic("Could not create links table: " + err.Error())
 	}
 
+	createUsersTable := `CREATE TABLE IF NOT EXISTS users (
+  		id SERIAL PRIMARY KEY,
+    	username TEXT NOT NULL,
+  		password TEXT NOT NULL,
+  		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	)`
+
+	_, err = DB.Exec(createUsersTable)
+	if err != nil {
+		panic("Could not create users table: " + err.Error())
+	}
 }
