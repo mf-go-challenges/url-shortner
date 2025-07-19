@@ -43,18 +43,6 @@ func InitDB() {
 }
 
 func CreateTables() {
-	createLinksTable := `CREATE TABLE IF NOT EXISTS links (
-  		id SERIAL PRIMARY KEY,
-    	code TEXT NOT NULL,
-  		url TEXT NOT NULL,
-  		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	)`
-
-	_, err := DB.Exec(createLinksTable)
-	if err != nil {
-		panic("Could not create links table: " + err.Error())
-	}
-
 	createUsersTable := `CREATE TABLE IF NOT EXISTS users (
   		id SERIAL PRIMARY KEY,
     	username TEXT NOT NULL,
@@ -62,8 +50,22 @@ func CreateTables() {
   		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	)`
 
-	_, err = DB.Exec(createUsersTable)
+	_, err := DB.Exec(createUsersTable)
 	if err != nil {
 		panic("Could not create users table: " + err.Error())
+	}
+
+	createLinksTable := `CREATE TABLE IF NOT EXISTS links (
+  		id SERIAL PRIMARY KEY,
+    	code TEXT NOT NULL,
+  		url TEXT NOT NULL,
+  		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    user_id INTEGER ,
+	    FOREIGN KEY(user_id) REFERENCES users(id)
+	)`
+
+	_, err = DB.Exec(createLinksTable)
+	if err != nil {
+		panic("Could not create links table: " + err.Error())
 	}
 }

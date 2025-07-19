@@ -1,12 +1,16 @@
 package handler
 
-import "github.com/gin-gonic/gin"
+import (
+	"example.com/url-shortner/middlewares"
+	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis_rate/v10"
+)
 
-func RegisterRoutes(server *gin.Engine) {
-	server.POST("/shorten", createShortUrl)
+func RegisterRoutes(server *gin.Engine, limiter *redis_rate.Limiter) {
+	server.POST("/shorten", middlewares.Authenticate, middlewares.RateLimitermiddleware(limiter), createShortUrl)
+	server.POST("/bulk", middlewares.Authenticate, middlewares.RateLimitermiddleware(limiter), BulkUploadUrls)
+
 	server.GET("/:code", getOriginalUrl)
-	server.POST("/bulk", BulkUploadUrls)
-
-	//server.POST("/signup", signup)
-	//server.POST("/signup")
+	server.POST("/signup", signup)
+	server.POST("/login", login)
 }

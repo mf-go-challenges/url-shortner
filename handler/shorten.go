@@ -7,14 +7,17 @@ import (
 )
 
 func createShortUrl(context *gin.Context) {
-	var url models.ShortUrl
-	err := context.ShouldBindJSON(&url)
+	var link models.Link
+	err := context.ShouldBindJSON(&link)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid JSON", "error": err.Error()})
 		return
 	}
 
-	ShortUrl, err := url.ShortenUrl()
+	userId := context.GetInt64("userId")
+	link.UserID = userId
+
+	ShortUrl, err := link.ShortenUrl()
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid JSON", "error": err.Error()})
 		return
@@ -25,13 +28,13 @@ func createShortUrl(context *gin.Context) {
 
 func getOriginalUrl(context *gin.Context) {
 	code := context.Param("code")
-	url, exists := models.UrlStore[code]
-	if !exists {
-		context.JSON(http.StatusNotFound, gin.H{"error": "code not found"})
+	link := &models.Link{Code: code}
+	err := link.GetOriginalUrl()
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-
-	context.Redirect(302, url)
+	context.Redirect(302, link.Url)
 }
 
 func BulkUploadUrls(context *gin.Context) {
@@ -49,7 +52,11 @@ func BulkUploadUrls(context *gin.Context) {
 
 	defer openedFile.Close()
 
-	result, err := models.BulkUploadUrls(openedFile)
+	var link models.Link
+	userId := context.GetInt64("userId")
+	link.UserID = userId
+
+	result, err := link.BulkUploadUrls(openedFile)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
